@@ -4,7 +4,9 @@
    No browser CORS fetch is used.
 */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzTe4Gardlu7Ds-6Q1_DSYhvG0IJltXSI3b0DUrb6iOvsXPMfkk11CY9dmZ3Hc9AMU/exec";
+
+const API_URL = "https://script.google.com/macros/s/AKfycbz0XOgr7NIhlA-ODYjQJWqkPxLoY_aCVWJSB55l-CgB1ba9_SDNk1LDxaIJHs_jYoBS/exec";
+
 
 const state = {
   menu: [],
