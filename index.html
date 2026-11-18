@@ -1,9 +1,84 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#243b32"><title>VIBE CO. POS</title><link rel="stylesheet" href="styles.css"></head>
-<body><header class="topbar"><div class="brand"><div class="logo">V</div><div><strong>VIBE CO.</strong><small>Café & Oasis · POS</small></div></div><div class="top-meta"><span class="live-dot" id="liveDot"></span><span id="connectionText">Connecting…</span><span class="date" id="todayLabel"></span></div></header>
-<div class="shell"><aside class="sidebar"><div class="side-label">WORKSPACE</div><button class="nav active" data-tab="order"><span>＋</span> Order Desk</button><button class="nav" data-tab="orders"><span>▤</span> Orders</button><button class="nav" data-tab="analytics"><span>◫</span> Analytics</button><button class="nav" data-tab="reports"><span>⇩</span> Reports</button><div class="side-footer"><div class="mini-logo">V</div><div><b>VIBE CO.</b><small>Make it a good one.</small></div></div></aside>
-<main class="main"><section class="tab-view active" id="tab-order"><div class="page-head"><div><p class="eyebrow">ORDER DESK</p><h1>Make it a good one.</h1><p class="muted">Tap a menu item to add it to the bill.</p></div><div class="date-pill" id="datePill"></div></div><div class="order-layout"><section class="menu-card-panel"><div class="menu-toolbar"><input id="searchInput" placeholder="Search drinks, snacks…" type="search"><div id="categoryList" class="categories"></div></div><div id="menuGrid" class="menu-grid"><div class="loading">Loading menu…</div></div></section><aside class="bill-panel"><div class="bill-title"><div><p class="eyebrow">CURRENT BILL</p><h2>Your order</h2></div><button id="clearOrder" class="ghost">Clear</button></div><div class="fields"><input id="customerName" placeholder="Customer name (optional)"><textarea id="orderNotes" placeholder="Order notes…" rows="2"></textarea></div><div id="cartItems" class="cart-items"><div class="empty">Your bill is empty <small>Add something delicious from the menu.</small></div></div><div class="bill-summary"><label class="discount">Discount ₹ <input id="discountInput" type="number" min="0" step="1" value="0"></label><div class="sumline"><span>Subtotal</span><b id="subtotal">₹0.00</b></div><div class="sumline"><span>Discount</span><b id="discountDisplay">− ₹0.00</b></div><div class="sumline total"><span>Total</span><b id="total">₹0.00</b></div></div><div class="payment"><span>Payment method</span><div><button class="payment-option active" data-payment="Cash">Cash</button><button class="payment-option" data-payment="UPI">UPI</button></div></div><button id="placeOrder" class="checkout" disabled><span>Save order</span><b id="checkoutTotal">₹0.00</b></button><small class="footnote">Order details are saved to your Google Sheet.</small></aside></div></section>
-<section class="tab-view" id="tab-orders"><div class="page-head"><div><p class="eyebrow">ORDER HISTORY</p><h1>Orders</h1><p class="muted">Your recent bills and transactions.</p></div><button class="btn-secondary" id="refreshOrders">Refresh orders</button></div><div class="stats-row"><div class="stat"><small>Orders loaded</small><strong id="ordersCount">0</strong></div><div class="stat"><small>Today's sales</small><strong id="ordersSales">₹0.00</strong></div></div><div id="ordersList" class="orders-list"><div class="empty-state">Orders will appear here when connected.</div></div></section>
-<section class="tab-view" id="tab-analytics"><div class="page-head"><div><p class="eyebrow">PERFORMANCE</p><h1>Analytics</h1><p class="muted">A quick view of café sales performance.</p></div></div><div class="stats-grid"><div class="stat"><small>Today's revenue</small><strong id="analyticsRevenue">₹0.00</strong><span>Based on loaded orders</span></div><div class="stat"><small>Today's orders</small><strong id="analyticsOrders">0</strong><span>Recorded bills</span></div><div class="stat"><small>Average bill</small><strong id="averageBill">₹0.00</strong><span>Revenue / orders</span></div></div><div class="panel"><h2>Sales overview</h2><div class="chart-placeholder" id="salesChart">Load order history to view your sales summary.</div></div></section>
-<section class="tab-view" id="tab-reports"><div class="page-head"><div><p class="eyebrow">EXPORT & CLOSE</p><h1>Reports</h1><p class="muted">Download order records for bookkeeping and daily review.</p></div></div><div class="report-grid"><div class="panel"><h2>Order summary</h2><p>One row per order, including date, time, order ID, items, payment and total.</p><button class="btn-secondary" id="exportOrders">Export orders CSV</button></div><div class="panel"><h2>Item-wise report</h2><p>One row per product item, with quantity, price and line total.</p><button class="btn-secondary" id="exportItems">Export item CSV</button></div></div><div class="panel report-note"><h2>Daily closing</h2><p id="closingText">Load order history to calculate a daily closing summary.</p></div></section>
-<div id="toast" class="toast"></div></main></div><script src="app.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#203e34">
+  <title>VIBE CO. · Café & Oasis POS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">V.</div>
+      <div><div class="brand-name">VIBE CO.</div><div class="brand-sub">CAFÉ & OASIS · ORDER DESK</div></div>
+    </div>
+    <div class="header-right"><span class="status-dot" id="statusDot"></span><span id="connectionStatus">Connecting to menu</span><span class="header-date" id="headerDate"></span></div>
+  </header>
+
+  <main class="app-shell">
+    <nav class="tabs" aria-label="Main navigation">
+      <button class="tab active" data-tab="order"><span>✦</span> Order & Billing</button>
+      <button class="tab" data-tab="history"><span>▤</span> History</button>
+      <button class="tab" data-tab="summary"><span>◷</span> Summary</button>
+    </nav>
+
+    <section class="view active" id="view-order">
+      <div class="welcome-row">
+        <div><p class="eyebrow">ORDER DESK</p><h1>Make it a good one.</h1><p class="subheading">Tap an item to add it to the bill.</p></div>
+        <div class="date-chip" id="dateChip"></div>
+      </div>
+
+      <section class="bill-card">
+        <div class="bill-heading"><div><p class="bill-kicker">CURRENT BILL</p><h2>Your bill</h2></div><span class="item-count" id="itemCount">0 items</span></div>
+        <div class="bill-fields">
+          <input id="customerName" type="text" maxlength="100" placeholder="Customer name (optional)">
+          <textarea id="orderNotes" rows="2" maxlength="500" placeholder="Order notes (optional)"></textarea>
+        </div>
+        <div id="cartItems" class="cart-items"><div class="cart-empty">Your bill is empty — tap any menu item below to add it</div></div>
+        <div class="bill-math">
+          <div class="math-row"><span>Subtotal</span><strong id="subtotal">₹0.00</strong></div>
+          <div class="discount-row"><label for="discountInput">Discount</label><div class="discount-input-wrap">₹ <input id="discountInput" type="number" min="0" step="1" value="0"></div></div>
+          <div class="math-total"><span>Total to collect</span><strong id="total">₹0.00</strong></div>
+        </div>
+        <div class="bill-actions">
+          <div class="payment-picker"><span>Payment method</span><div><button class="payment-btn active" data-payment="Cash">Cash</button><button class="payment-btn" data-payment="UPI">UPI</button></div></div>
+          <div class="checkout-row"><button id="saveOrder" class="checkout-btn" disabled>Complete order · <span id="checkoutTotal">₹0.00</span></button><button id="clearBill" class="clear-btn" type="button">Clear</button></div>
+        </div>
+        <p class="bill-footnote">Order details are recorded in your Google Sheet.</p>
+      </section>
+
+      <section class="menu-section">
+        <div class="section-heading"><div><p class="eyebrow">FRESHLY MADE</p><h2>Menu</h2></div><span class="menu-hint">Tap to add · ₹</span></div>
+        <input class="search-box" id="menuSearch" type="search" placeholder="Find an item…">
+        <div class="category-list" id="categoryList"><button class="category active">All</button></div>
+        <div class="menu-grid" id="menuGrid"><div class="loading-card">Loading your menu…</div></div>
+        <div class="error-banner hidden" id="menuError"></div>
+      </section>
+    </section>
+
+    <section class="view" id="view-history">
+      <div class="welcome-row"><div><p class="eyebrow">YOUR TRANSACTIONS</p><h1>Order history</h1><p class="subheading">Review completed café orders.</p></div><button class="secondary-btn" id="refreshHistory">↻ Refresh</button></div>
+      <div class="history-summary"><div class="metric-card"><span>Orders today</span><strong id="historyCount">0</strong></div><div class="metric-card"><span>Sales today</span><strong id="historySales">₹0.00</strong></div></div>
+      <div id="historyList" class="history-list"><div class="loading-card">Loading orders…</div></div>
+    </section>
+
+    <section class="view" id="view-summary">
+      <div class="welcome-row"><div><p class="eyebrow">THE BIG PICTURE</p><h1>Sales summary</h1><p class="subheading">A quick snapshot of your café performance.</p></div><button class="secondary-btn" id="refreshSummary">↻ Refresh</button></div>
+      <div class="summary-grid">
+        <div class="metric-card"><span>Today's revenue</span><strong id="todayRevenue">₹0.00</strong><small>Completed orders</small></div>
+        <div class="metric-card"><span>Orders today</span><strong id="todayOrders">0</strong><small>Number of bills</small></div>
+        <div class="metric-card"><span>Average bill</span><strong id="averageBill">₹0.00</strong><small>Revenue per order</small></div>
+      </div>
+      <div class="summary-panel"><div class="section-heading"><div><p class="eyebrow">PAYMENT BREAKDOWN</p><h2>Today's collections</h2></div></div><div class="payment-breakdown" id="paymentBreakdown"></div></div>
+      <div class="summary-panel"><div class="section-heading"><div><p class="eyebrow">DAILY CLOSING</p><h2>Closing snapshot</h2></div></div><p id="closingSnapshot" class="closing-copy">Load your orders to calculate today's closing summary.</p><div class="export-actions"><button class="secondary-btn" id="exportOrders">Download order CSV</button><button class="secondary-btn" id="exportItems">Download item CSV</button></div></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
